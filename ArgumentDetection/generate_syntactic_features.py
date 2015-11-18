@@ -1,9 +1,13 @@
+import nltk
 
 class SyntacticFeatures:
     def __init__(self):
         self.POSList = ["SBAR","SBARQ","SINV","SQ","S","FRAG"]
         self.PresentList = ["VBP","VBZ"]
         self.PastList = ["VBD"]
+
+    def get_tokens(self,sent):
+        return nltk.word_tokenize(sent)
 
     def get_subclauses(self,clause):
         subclause_count = 0
@@ -32,19 +36,12 @@ class SyntacticFeatures:
         return float(max_depth)
 
     def is_present_tense(self,clause):
-        present = 0
-        past = 0
-        for tense in self.PastList:
-            past += clause.count(tense)
+        verb_index = clause.find("(VP")
+        main_verb = clause.find("(V",verb_index+1)
+        if main_verb > -1:
+            if clause[main_verb:clause.find(" ",main_verb)] in self.PresentList:
+                return 1
+        return 0
 
-        for tense in self.PresentList:
-            present += clause.count(tense)
 
-        if past > 0 and present > 0:
-            print clause,present,past
-
-        if present > 0:
-            return 1
-        else:
-            return 0
 

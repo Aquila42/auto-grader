@@ -1,7 +1,7 @@
 
 class IndicatorFeatures:
     def __init__(self):
-        f = open("discourse_markers","r")
+        f = open("data/discourse_markers","r")
         self.discourse_markers = []
         for line in f:
             self.discourse_markers.append(line.strip())
