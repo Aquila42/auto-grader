@@ -1,4 +1,4 @@
-from nltk import bigrams,trigrams
+from nltk import bigrams,trigrams,word_tokenize
 class LexicalFeatures:
     def __init__(self):
         self.VerbList = ["VP","VB","VBD","VBG","VBN","VBP","VBZ"]
@@ -17,11 +17,11 @@ class LexicalFeatures:
         return x_grams
 
     def count_tag(self,tag,clause):
-        index = clause.find(tag)
+        index = clause.find("("+tag+" ")
         count = 0
         while index != -1 and index < len(clause):
             count += 1
-            index = clause.find("("+tag,index+1)
+            index = clause.find("("+tag+" ",index+1)
         return float(count)
 
     def get_verbs(self,clause):
@@ -40,13 +40,20 @@ class LexicalFeatures:
         return self.count_tag(self.Modal,clause)
 
     def check_belonging(self,x_list,y_list):
+        list_x = []
         for word in x_list:
             if word in y_list:
-                return True
-        return False
+                list_x.append(word)
+        return list_x
 
-    def get_ngrams(self,clause):
-        clause_list = clause.split()
-        if self.check_belonging(clause_list,self.Unigrams) or self.check_belonging(bigrams(clause_list),self.Bigrams) or self.check_belonging(trigrams(clause_list),self.Trigrams):
-            return 1
-        return 0
+    def get_ngrams(self,sent,features_dict):
+        sent_list = word_tokenize(sent)
+        features_list = []
+        features_list.extend(self.check_belonging(sent_list,self.Unigrams))
+        sent_list = bigrams(sent)
+        features_list.extend(self.check_belonging(sent_list,self.Bigrams))
+        sent_list = trigrams(sent)
+        features_list.extend(self.check_belonging(sent_list,self.Trigrams))
+        for word in features_list:
+            features_dict[word] = 1
+        return features_dict,features_list

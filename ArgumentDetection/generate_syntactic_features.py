@@ -6,9 +6,6 @@ class SyntacticFeatures:
         self.PresentList = ["VBP","VBZ"]
         self.PastList = ["VBD"]
 
-    def get_tokens(self,sent):
-        return nltk.word_tokenize(sent)
-
     def get_subclauses(self,clause):
         subclause_count = 0
         pos_index = 0
